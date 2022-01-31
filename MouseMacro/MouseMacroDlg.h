@@ -39,4 +39,5 @@ public:
 	afx_msg void OnClickedButtonSave();
 	shared_ptr<thread> keyListener;
 	bool isStop;
+	virtual BOOL DestroyWindow();
 };

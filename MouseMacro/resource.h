@@ -8,7 +8,6 @@
 #define IDD_MOUSEMACRO_DIALOG           102
 #define IDR_MAINFRAME                   128
 #define IDC_BUTTON_SAVE                 1000
-#define IDC_CHECK1                      1001
 #define IDC_CHECK_TIMEDIV               1001
 #define IDC_EDIT_TIMEDIV                1002
 

@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 #include <Windows.h>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -73,6 +74,25 @@ BEGIN_MESSAGE_MAP(CMouseMacroDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CMouseMacroDlg::OnClickedButtonSave)
 END_MESSAGE_MAP()
 
+void keyListen(bool* isStop) {
+	vector<pair<CPoint, int>> macData; // 해당좌표 이후 대기시간
+	bool startFlag = true;
+
+	while (*isStop) {
+		if ((GetAsyncKeyState(VK_F8) < 0) && startFlag) {
+			cout << "F8" << endl;
+			startFlag = false;
+		}
+		if ((GetAsyncKeyState(VK_F9) < 0) && !startFlag) {
+			cout << "F9" << endl;
+			startFlag = true;
+		}
+		if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0) {
+			cout << "L BUTTON" << endl;
+		}
+
+	}
+}
 
 // CMouseMacroDlg 메시지 처리기
 
@@ -106,7 +126,8 @@ BOOL CMouseMacroDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	keyListener = make_shared<thread>(keyListen, isStop);
+	isStop = true;
+	keyListener = make_shared<thread>(keyListen, &isStop);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -167,19 +188,13 @@ void CMouseMacroDlg::OnClickedButtonSave()
 
 }
 
-void keyListen(bool& stop) {
-	while (stop) {
-		if (GetAsyncKeyState(VK_F1) < 0) {
-			cout << "F1" << endl;
-		}
-	}
-}
-
 
 BOOL CMouseMacroDlg::DestroyWindow()
 {
-	keyListener->join();
-
+	if (keyListener != nullptr) {
+		isStop = false;
+		keyListener->join();
+	}
 
 	return CDialogEx::DestroyWindow();
 }
